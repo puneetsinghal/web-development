@@ -2,3 +2,5 @@
 env/
 # ignore the python cache folder
 __pycache__/
+# ignore vscode setting
+.vscode/
