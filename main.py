@@ -13,17 +13,20 @@
 # limitations under the License.
 
 # [START gae_python37_app]
-from flask import Flask, request, Response, jsonify, g, redirect
 
-from helper import *
+# open libraries
 import cgi
+from flask import Flask, request, Response, jsonify, g, redirect
+import html
 
+# internal libraries
+from helper import *
 
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = Flask(__name__)
 
-form="""
+birthday_form = """
 <form method='post'>
 What is your birthday?
 <br>
@@ -41,8 +44,17 @@ What is your birthday?
 <input type='submit'>
 </form>
 """
+rot13_form = """
+<form method='post'>
+Enter some text to ROT13:
+<br>
+<textarea name='input'>%(textinput)s</textarea>
+<br>
+<input type='submit'>
+</form>
+"""
 def write_form(error="", month="", day="", year=""):
-    return form % {"error": cgi.escape(error, quote=True),
+    return birthday_form % {"error": cgi.escape(error, quote=True),
                    "month":  cgi.escape(month, quote=True),
                    "day":  cgi.escape(day, quote=True),
                    "year":  cgi.escape(year, quote=True)}
@@ -81,6 +93,17 @@ def testform():
 @app.route('/thanks', methods=['GET'])
 def ThanksHandler():
     return "Thanks! That's a totally valid day"
+
+@app.route('/rot13', methods=['POST','GET'])
+def rot13():
+    print(request.method)
+    if request.method == 'GET':
+        return rot13_form % {'textinput': ''}
+    if request.method == 'POST':
+        input = request.form['input']
+        return rot13_form % {'textinput': html.escape(rot13_conversion(input), quote=True)}
+    else:
+        return 'something wrong in post'
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
