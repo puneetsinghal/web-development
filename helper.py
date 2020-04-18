@@ -1,3 +1,8 @@
+# codes inspired from CS253 video lectures
+
+# open libraries
+import html
+
 months = ['January',
 'February',
 'March',
@@ -30,3 +35,22 @@ def valid_year(year):
         year = int(year)
         if year > 1900 and year < 2021:
             return year
+
+def rot13_conversion(input):
+    out = ""
+    for char in html.unescape(input):
+        if (char.isalpha() and char.islower()):
+            index = ord(char) - ord('a')
+            index = index + 13
+            if index > 25:
+                index = index - 26
+            out = out + chr(index + ord('a'))
+        elif char.isalpha():
+            index = ord(char) - ord('A')
+            index = index + 13
+            if index > 25:
+                index = index - 26
+            out = out + chr(index + ord('A'))
+        else:
+            out = out + char
+    return out
