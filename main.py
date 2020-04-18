@@ -59,8 +59,13 @@ def write_form(error="", month="", day="", year=""):
                    "day":  cgi.escape(day, quote=True),
                    "year":  cgi.escape(year, quote=True)}
 
-@app.route('/', methods=['POST','GET'])
+@app.route('/', methods=['GET'])
 def home():
+    """Return a friendly HTTP greeting."""
+    return redirect('/cs253/unit2/rot13')
+
+@app.route('/cs253/birthday', methods=['POST','GET'])
+def cs253_birthday():
     if request.method == 'POST':
         month = valid_month(request.form['month'])
         day = valid_day(request.form['day'])
@@ -75,6 +80,7 @@ def home():
     else:
         """Return a friendly HTTP greeting."""
         return write_form()
+
 
 @app.route('/testform', methods=['POST', 'GET'])
 def testform():
@@ -94,8 +100,8 @@ def testform():
 def ThanksHandler():
     return "Thanks! That's a totally valid day"
 
-@app.route('/rot13', methods=['POST','GET'])
-def rot13():
+@app.route('/cs253/unit2/rot13', methods=['POST','GET'])
+def cs_unit2_rot13():
     print(request.method)
     if request.method == 'GET':
         return rot13_form % {'textinput': ''}
