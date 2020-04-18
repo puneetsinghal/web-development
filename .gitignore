@@ -1,0 +1,4 @@
+# ignore the virtual environment folder from git path
+env/
+# ignore the python cache folder
+__pycache__/
