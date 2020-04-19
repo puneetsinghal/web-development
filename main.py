@@ -92,24 +92,7 @@ signup_form = """
 </form>
 """
 def write_form_signup(params):
-    wrong_password_msg = ''
-    if not params['valid_password']:
-        wrong_password_msg = 'That wasn\'t a valid password'
-    wrong_username_msg = ''
-    if not params['valid_username']:
-        wrong_username_msg = 'That\'s not a valid username'
-    password_mismatch_msg = ''
-    if not params['matching_password'] and params['valid_password']:
-        password_mismatch_msg = 'Your passwords didn\'t match' 
-    wrong_email_msg = ''
-    if not params['valid_email']:
-        wrong_email_msg = 'That\'s not a valid email'
-    return signup_form % {'username': cgi.escape(params['username'], quote=True),
-                          'email': cgi.escape(params['email'], quote=True),
-                          'wrong_username_message': wrong_username_msg,
-                          'wrong_password_message': wrong_password_msg,
-                          'password_mismatch_message': password_mismatch_msg,
-                          'wrong_email_message': wrong_email_msg}
+    return signup_form % {**params}
 
 @app.route('/', methods=['GET'])
 def home():
@@ -162,23 +145,42 @@ def cs_unit2_rot13():
 @app.route('/cs253/unit2/signup', methods=['POST','GET'])
 def user_signup():
     if request.method == 'GET':
-        return write_form_signup(params = {'username': '',
-                                 'email': '',
-                                 'valid_username':True,
-                                 'valid_password':True,
-                                 'matching_password':True,
-                                 'valid_email':True})
+        return write_form_signup(params = {
+                                'username': '',
+                                'email': '',
+                                'wrong_username_message':"",
+                                'wrong_password_message':"",
+                                'password_mismatch_message':"",
+                                'wrong_email_message':""})
     elif request.method == 'POST':
         params = {}
         params['username'] = request.form['username']
         password = request.form['password']
         verify_password = request.form['verify_password']
         params['email'] = request.form['email']
-        params['valid_password'] = IsValidPassword(password)
-        params['valid_username'] = IsValidUsername(params['username'])
-        params['valid_email'] = IsValidEmail(params['email'])
-        params['matching_password'] = IsMatchingPassword(password, verify_password)
-        if (not params['valid_username'] or not params['valid_password'] or not params['matching_password'] or not params['valid_email']) :
+        error = False
+        if not IsValidPassword(password):
+            params['wrong_password_message'] = "That wasn't a valid password"
+            params['password_mismatch_message'] = ""
+            error = True
+        elif not IsMatchingPassword(password, verify_password):
+            params['wrong_password_message'] = ""
+            params['password_mismatch_message'] = "Your passwords didn't match"
+            error = True
+        else:
+            params['wrong_password_message'] = ""
+            params['password_mismatch_message'] = ""
+        if not IsValidUsername(params['username']):
+            params['wrong_username_message'] = "That's not a valid username"
+            error = True
+        else:
+            params['wrong_username_message'] = ""
+        if not IsValidEmail(params['email']):
+            params['wrong_email_message'] = "That's not a valid email"
+            error = True
+        else:
+            params['wrong_email_message'] = ""
+        if (error):
             return write_form_signup(params)
         else:
             return redirect('/cs253/unit2/signup/welcome?username=' + params['username'])
