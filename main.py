@@ -191,13 +191,7 @@ def user_signup():
 def user_welcome():
     username = request.args.get('username')
     if not IsValidUsername(username) :
-        return write_form_signup(params = {
-                                'username': '',
-                                'email': '',
-                                'wrong_username_message':"",
-                                'wrong_password_message':"",
-                                'password_mismatch_message':"",
-                                'wrong_email_message':""})
+        return redirect('/cs253/unit2/signup')
     else:
         return "Welcome, " + username + "!"
 
