@@ -190,7 +190,16 @@ def user_signup():
 @app.route('/cs253/unit2/signup/welcome', methods=['GET'])
 def user_welcome():
     username = request.args.get('username')
-    return "Welcome, " + username + "!"
+    if not IsValidUsername(username) :
+        return write_form_signup(params = {
+                                'username': '',
+                                'email': '',
+                                'wrong_username_message':"",
+                                'wrong_password_message':"",
+                                'password_mismatch_message':"",
+                                'wrong_email_message':""})
+    else:
+        return "Welcome, " + username + "!"
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
