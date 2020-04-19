@@ -2,6 +2,7 @@
 
 # open libraries
 import html
+import re
 
 months = ['January',
 'February',
@@ -54,3 +55,26 @@ def rot13_conversion(input):
         else:
             out = out + char
     return out
+'''
+checks if a password is valid; not containing "^.{3,20}$"
+'''
+def IsValidPassword(password):
+    regex = re.compile(r'^.{3,20}$')
+    return password and regex.match(password)
+'''
+checks if an username is valid; not containing ^[a-zA-Z0-9_-]{3,20}$
+'''
+def IsValidUsername(username):
+    regex = re.compile(r'^[a-zA-Z0-9_-]{3,20}$')
+    return username and regex.match(username)
+'''
+checks if an email is valid; not containing ^[\S]+@[\S]+\.[\S]+$
+'''
+def IsValidEmail(email):
+    regex = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
+    return not email or regex.match(email)
+'''
+checks if password and verify_password matches
+'''
+def IsMatchingPassword(password, verify_password):
+    return password == verify_password
