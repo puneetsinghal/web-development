@@ -44,6 +44,7 @@ What is your birthday?
 <input type='submit'>
 </form>
 """
+
 rot13_form = """
 <form method='post'>
 Enter some text to ROT13:
@@ -59,10 +60,61 @@ def write_form(error="", month="", day="", year=""):
                    "day":  cgi.escape(day, quote=True),
                    "year":  cgi.escape(year, quote=True)}
 
+signup_form = """
+<h2>Signup</h2>
+<br>
+<form method = 'POST'>
+<label>
+    Username
+    <input type='text' name='username' value='%(username)s'>
+</label>
+%(wrong_username_message)s
+<br>
+<label>
+    Password
+    <input type='password' name='password' value=''>
+</label>
+%(wrong_password_message)s
+<br>
+<label>
+    Verify Password
+    <input type='password' name='verify_password' value=''>
+</label>
+%(password_mismatch_message)s
+<br>
+<label>
+    Email (optional)
+    <input type='text' name='email' value='%(email)s'>
+</label>
+%(wrong_email_message)s
+<br>
+<input type='submit' value='Submit'>
+</form>
+"""
+def write_form_signup(params):
+    wrong_password_msg = ''
+    if not params['valid_password']:
+        wrong_password_msg = 'That wasn\'t a valid password'
+    wrong_username_msg = ''
+    if not params['valid_username']:
+        wrong_username_msg = 'That\'s not a valid username'
+    password_mismatch_msg = ''
+    if not params['matching_password'] and params['valid_password']:
+        password_mismatch_msg = 'Your passwords didn\'t match' 
+    wrong_email_msg = ''
+    if not params['valid_email']:
+        wrong_email_msg = 'That\'s not a valid email'
+    return signup_form % {'username': cgi.escape(params['username'], quote=True),
+                          'email': cgi.escape(params['email'], quote=True),
+                          'wrong_username_message': wrong_username_msg,
+                          'wrong_password_message': wrong_password_msg,
+                          'password_mismatch_message': password_mismatch_msg,
+                          'wrong_email_message': wrong_email_msg}
+
 @app.route('/', methods=['GET'])
 def home():
     """Return a friendly HTTP greeting."""
-    return redirect('/cs253/unit2/rot13')
+    return redirect('/cs253/unit2/signup')
 
 @app.route('/cs253/birthday', methods=['POST','GET'])
 def cs253_birthday():
@@ -71,8 +123,6 @@ def cs253_birthday():
         day = valid_day(request.form['day'])
         year = valid_year(request.form['year'])
         error = ""
-        # if not month:
-        #     error
         if not (month and day and year):
             return write_form("That does not valid to me", request.form['month'], request.form['day'], request.form['year'])
         else:
@@ -83,8 +133,7 @@ def cs253_birthday():
 
 
 @app.route('/testform', methods=['POST', 'GET'])
-def testform():
-    print (request)
+def test_form():
     if request.method == 'GET':
         user = request.args.get('user')
         return user
@@ -97,12 +146,11 @@ def testform():
         # return 'Got the post request instead of get request'
 
 @app.route('/thanks', methods=['GET'])
-def ThanksHandler():
+def thanks_handler():
     return "Thanks! That's a totally valid day"
 
 @app.route('/cs253/unit2/rot13', methods=['POST','GET'])
 def cs_unit2_rot13():
-    print(request.method)
     if request.method == 'GET':
         return rot13_form % {'textinput': ''}
     if request.method == 'POST':
@@ -110,6 +158,37 @@ def cs_unit2_rot13():
         return rot13_form % {'textinput': html.escape(rot13_conversion(input), quote=True)}
     else:
         return 'something wrong in post'
+
+@app.route('/cs253/unit2/signup', methods=['POST','GET'])
+def user_signup():
+    if request.method == 'GET':
+        return write_form_signup(params = {'username': '',
+                                 'email': '',
+                                 'valid_username':True,
+                                 'valid_password':True,
+                                 'matching_password':True,
+                                 'valid_email':True})
+    elif request.method == 'POST':
+        params = {}
+        params['username'] = request.form['username']
+        password = request.form['password']
+        verify_password = request.form['verify_password']
+        params['email'] = request.form['email']
+        params['valid_password'] = IsValidPassword(password)
+        params['valid_username'] = IsValidUsername(params['username'])
+        params['valid_email'] = IsValidEmail(params['email'])
+        params['matching_password'] = IsMatchingPassword(password, verify_password)
+        if (not params['valid_username'] or not params['valid_password'] or not params['matching_password'] or not params['valid_email']) :
+            return write_form_signup(params)
+        else:
+            return redirect('/cs253/unit2/signup/welcome?username=' + params['username'])
+    else:
+        return 'something wrong in post'
+
+@app.route('/cs253/unit2/signup/welcome', methods=['GET'])
+def user_welcome():
+    username = request.args.get('username')
+    return "Welcome, " + username + "!"
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
