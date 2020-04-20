@@ -26,6 +26,23 @@ from helper import *
 # called `app` in `main.py`.
 app = Flask(__name__)
 
+home_html = """
+<div class="Udacity_cs253">
+    <h1>
+        UDACITY course CS253 Problem Sets
+    </h1>
+    <p class="udacity_cs253_description">
+        These are webpages leading to different problem sets for Udacity's course: CS253
+    </p>
+    <table style="width:100%">
+        <tr>
+            <td><a href="/cs253/birthday" aria-label="Jump to">CS253 Problem - Birthday</a></td>
+            <td><a href="/cs253/unit2/rot13" aria-label="Jump to">CS253 Unit 2 - ROT13</a></td>
+            <td><a href="/cs253/unit2/signup" aria-label="Jump to">CS253 Unit 2 - Signup Page</a></td>
+        </tr>
+    </table>
+</div>
+"""
 birthday_form = """
 <form method='post'>
 What is your birthday?
@@ -97,6 +114,7 @@ def write_form_signup(params):
 @app.route('/', methods=['GET'])
 def home():
     """Return a friendly HTTP greeting."""
+    return home_html
     return redirect('/cs253/unit2/signup')
 
 @app.route('/cs253/birthday', methods=['POST','GET'])
