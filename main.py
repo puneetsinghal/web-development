@@ -39,6 +39,7 @@ home_html = """
             <td><a href="/cs253/birthday" aria-label="Jump to">CS253 Problem - Birthday</a></td>
             <td><a href="/cs253/unit2/rot13" aria-label="Jump to">CS253 Unit 2 - ROT13</a></td>
             <td><a href="/cs253/unit2/signup" aria-label="Jump to">CS253 Unit 2 - Signup Page</a></td>
+            <td><a href="/cs253/templates/shopping_list_1" aria-label="Jump to">CS253 Problem - Shopping List 1</a></td>
         </tr>
     </table>
 </div>
@@ -108,6 +109,28 @@ signup_form = """
 <input type='submit' value='Submit'>
 </form>
 """
+
+list_input_form = """
+<h1>Add a Food</h1>
+<form>
+<input type="text" name="food">
+%s
+<input type="submit" value="Add">
+</form>
+"""
+hidden_item = """
+<input type="hidden" name="food" value="%s">
+"""
+item_list = "<li>%s</li>"
+
+shopping_list = """
+<br>
+<br>
+<h1>Shopping List</h1>
+<ul>
+%s
+<ul>
+"""
 def write_form_signup(params):
     return signup_form % {**params}
 
@@ -115,7 +138,6 @@ def write_form_signup(params):
 def home():
     """Return a friendly HTTP greeting."""
     return home_html
-    return redirect('/cs253/unit2/signup')
 
 @app.route('/cs253/birthday', methods=['POST','GET'])
 def cs253_birthday():
@@ -212,6 +234,17 @@ def user_welcome():
         return redirect('/cs253/unit2/signup')
     else:
         return "Welcome, " + username + "!"
+
+@app.route('/cs253/templates/shopping_list_1', methods=['GET'])
+def shopping_list_1():
+    food = request.args.getlist("food")
+    items_output = ""
+    hidden_output = ""
+    for item in food:
+        hidden_output += hidden_item % item
+        items_output += item_list % item
+    shopping_list_output = shopping_list % items_output
+    return list_input_form % hidden_output + shopping_list_output
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
