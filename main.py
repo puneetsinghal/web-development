@@ -249,7 +249,8 @@ def shopping_list_1():
 
 @app.route('/cs253/templates/shopping_list_2', methods=['GET'])
 def shopping_list_2():
-    return render_template('shopping_list.html')
+    items = request.args.getlist("food")
+    return render_template('shopping_list.html', items=items)
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
