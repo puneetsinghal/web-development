@@ -16,7 +16,7 @@
 
 # open libraries
 import cgi
-from flask import Flask, request, Response, jsonify, g, redirect
+from flask import Flask, request, Response, jsonify, g, redirect, render_template
 import html
 
 # internal libraries
@@ -40,6 +40,7 @@ home_html = """
             <td><a href="/cs253/unit2/rot13" aria-label="Jump to">CS253 Unit 2 - ROT13</a></td>
             <td><a href="/cs253/unit2/signup" aria-label="Jump to">CS253 Unit 2 - Signup Page</a></td>
             <td><a href="/cs253/templates/shopping_list_1" aria-label="Jump to">CS253 Problem - Shopping List 1</a></td>
+            <td><a href="/cs253/templates/shopping_list_2" aria-label="Jump to">CS253 Problem - Shopping List 2</a></td>
         </tr>
     </table>
 </div>
@@ -110,14 +111,6 @@ signup_form = """
 </form>
 """
 
-list_input_form = """
-<h1>Add a Food</h1>
-<form>
-<input type="text" name="food">
-%s
-<input type="submit" value="Add">
-</form>
-"""
 hidden_item = """
 <input type="hidden" name="food" value="%s">
 """
@@ -245,6 +238,10 @@ def shopping_list_1():
         items_output += item_list % item
     shopping_list_output = shopping_list % items_output
     return list_input_form % hidden_output + shopping_list_output
+
+@app.route('/cs253/templates/shopping_list_2', methods=['GET'])
+def shopping_list_2():
+    return render_template('shopping_list.html')
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
