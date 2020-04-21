@@ -111,6 +111,14 @@ signup_form = """
 </form>
 """
 
+list_input_form = """
+<h1>Add a Food</h1>
+<form>
+<input type="text" name="food">
+%s
+<input type="submit" value="Add">
+</form>
+"""
 hidden_item = """
 <input type="hidden" name="food" value="%s">
 """
