@@ -28,11 +28,12 @@
             width: 400px;
             font-size: 20px;
             padding: 2px;
+            font-family: monospace;
         }
 
         textarea {
             width: 400px;
-            height: 200px;
+            height: 400px;
             font-size: 17px;
             font-family: monospace;
         }
@@ -57,6 +58,33 @@
         .art-body {
             margin: 0;
             font-size: 17px;
+        }
+
+        .blog + .blog {
+            margin-top: 15px;
+        }
+
+        .blog-heading {
+            position: relative;
+            border-bottom: 3px solid #666;
+        }
+
+        .blog-subject {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .blog-date {
+            position: absolute;
+            right: 0px;
+            bottom: 0px;
+            color: #999;
+            font-size: 20px;
+        }
+
+        .blog-body {
+            margin-top: 10px;
+            font-size: 14px;
         }
     </style>
     <body>

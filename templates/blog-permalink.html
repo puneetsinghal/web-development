@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}
+CS 253 Blog
+{% endblock %}
+
+{% block pagehighlight %}
+CS 253 Blog
+{% endblock %}
+
+{% block content %}
+    {% include 'blog-post.html' % item %}
+{% endblock %}

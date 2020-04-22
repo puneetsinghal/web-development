@@ -16,6 +16,7 @@
 
 # open libraries
 import cgi
+import datetime
 from flask import Flask, request, Response, jsonify, g, redirect, render_template
 import html
 from google.cloud import datastore
@@ -45,6 +46,7 @@ home_html = """
             <td><a href="/cs253/templates/shopping_list_1" aria-label="Jump to">CS253 Problem - Shopping List 1</a></td>
             <td><a href="/cs253/templates/shopping_list_2" aria-label="Jump to">CS253 Problem - Shopping List 2</a></td>
             <td><a href="/cs253/templates/ascii" aria-label="Jump to">CS253 Problem - ASCII Chan</a></td>
+            <td><a href="/cs253/blog" aria-label="Jump to">CS253 Problem - Blog</a></td>
         </tr>
     </table>
 </div>
@@ -276,6 +278,33 @@ def ascii():
             items = client.query().fetch()
             return render_template("ascii_chan.html", title=title, art=art, error=error, items=items)
 
+@app.route('/cs253/blog/newpost', methods=['GET', 'POST'])
+def blog_newpost():
+    if request.method == 'GET':
+        items = client.query().fetch()
+        return render_template("blog-newpost.html")
+    elif request.method == 'POST':
+        subject = request.form["subject"]
+        blog = request.form["blog"]
+        if subject and blog:
+            entity = datastore.Entity(key=client.key('blog'))
+            entity.update({'subject': subject, 'blog': blog, "created":datetime.datetime.utcnow()})
+            client.put(entity)
+            return redirect('/cs253/blog/' + str(entity.id))
+        else:
+            error = "subject and content should not be empty!"
+            return render_template("blog-newpost.html", subject=subject, blog=blog, error=error)
+
+@app.route('/cs253/blog', methods=['GET'])
+def blog_front():
+    items = client.query(kind='blog', order=["-created"]).fetch()
+    return render_template("blog-front.html", items=items)
+
+@app.route('/cs253/blog/<id>', methods=['GET'])
+def blog_post(id):
+    query = client.query(kind='blog')
+    items = [item for item in query.fetch() if item.id == int(id)]
+    return render_template("blog-permalink.html", item=items[0])
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
