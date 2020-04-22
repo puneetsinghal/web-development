@@ -153,6 +153,8 @@ def home():
     visits = request.cookies.get('visits', '0')
     if visits.isdigit():
         visits = int(visits) + 1
+    else:
+        visits = 0
     message = 'You have been here %s times' % visits
     response.headers.add_header('Set-Cookie', 'visits=%s' % visits)
     response.data = home_html.format(message)
