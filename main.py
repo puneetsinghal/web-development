@@ -49,6 +49,10 @@ home_html = """
             <td><a href="/cs253/blog" aria-label="Jump to">CS253 Problem - Blog</a></td>
         </tr>
     </table>
+    <br>
+    <div class="error">
+        {}
+    </div>
 </div>
 """
 birthday_form = """
@@ -144,7 +148,15 @@ def write_form_signup(params):
 @app.route('/', methods=['GET'])
 def home():
     """Return a friendly HTTP greeting."""
-    return home_html
+    response = Response()
+    response.headers['Content-Type'] = 'text/html'
+    visits = request.cookies.get('visits', '0')
+    if visits.isdigit():
+        visits = int(visits) + 1
+    message = 'You have been here %s times' % visits
+    response.headers.add_header('Set-Cookie', 'visits=%s' % visits)
+    response.data = home_html.format(message)
+    return response
 
 @app.route('/cs253/birthday', methods=['POST','GET'])
 def cs253_birthday():
