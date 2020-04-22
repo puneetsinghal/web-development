@@ -18,6 +18,7 @@
 import cgi
 from flask import Flask, request, Response, jsonify, g, redirect, render_template
 import html
+from google.cloud import datastore
 
 # internal libraries
 from helper import *
@@ -25,6 +26,8 @@ from helper import *
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = Flask(__name__)
+
+client = datastore.Client()
 
 home_html = """
 <div class="Udacity_cs253">
@@ -41,6 +44,7 @@ home_html = """
             <td><a href="/cs253/unit2/signup" aria-label="Jump to">CS253 Unit 2 - Signup Page</a></td>
             <td><a href="/cs253/templates/shopping_list_1" aria-label="Jump to">CS253 Problem - Shopping List 1</a></td>
             <td><a href="/cs253/templates/shopping_list_2" aria-label="Jump to">CS253 Problem - Shopping List 2</a></td>
+            <td><a href="/cs253/templates/ascii" aria-label="Jump to">CS253 Problem - ASCII Chan</a></td>
         </tr>
     </table>
 </div>
@@ -251,6 +255,27 @@ def shopping_list_1():
 def shopping_list_2():
     items = request.args.getlist("food")
     return render_template('shopping_list.html', items=items)
+
+@app.route('/cs253/templates/ascii', methods=['GET', 'POST'])
+def ascii():
+    if request.method == 'GET':
+        items = client.query().fetch()
+        return render_template("ascii_chan.html", items=items)
+    elif request.method == 'POST':
+        title = request.form["title"]
+        art = request.form["art"]
+        if art and title:
+            # key = client.key('EntityKind', "ascii-chan")
+            entity = datastore.Entity(key=client.key('ascii-chan', title))
+            entity.update({'title': title, 'art': art})
+            client.put(entity)
+            items = client.query().fetch()
+            return render_template("ascii_chan.html", items=items)
+        else:
+            error = "we need title as well some artwork"
+            items = client.query().fetch()
+            return render_template("ascii_chan.html", title=title, art=art, error=error, items=items)
+
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
