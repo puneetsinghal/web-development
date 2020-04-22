@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}
+ASCII Chan
+{% endblock %}
+
+{% block pagehighlight %}
+ASCII Chan
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    <label>
+        <div>title</div>
+        <input type="text" name="title" value="{{title}}">
+    </label>
+    <label>
+        <div>art</div>
+        <textarea name="art">{{art}}</textarea>
+    </label>
+    <div class="error">{{error}}</div>
+    <input type="submit">
+    <hr>
+    {% for item in items %}
+        <div class="art">
+            <div class="art-title">{{item.title}}</div>
+            <pre class="art-body">{{item.art}}</pre>
+        </div>
+    {%endfor%}
+</form>
+{% endblock %}
