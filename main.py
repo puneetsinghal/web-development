@@ -23,7 +23,7 @@ from google.cloud import datastore
 
 # internal libraries
 from helper import *
-
+from hash import *
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = Flask(__name__)
@@ -150,13 +150,14 @@ def home():
     """Return a friendly HTTP greeting."""
     response = Response()
     response.headers['Content-Type'] = 'text/html'
-    visits = request.cookies.get('visits', '0')
-    if visits.isdigit():
-        visits = int(visits) + 1
-    else:
-        visits = 0
+    request_visits_cookie = request.cookies.get('visits')
+    visits = 0
+    if request_visits_cookie:
+        val = check_secure_val(request_visits_cookie)
+        if val:
+            visits = int(val) + 1
     message = 'You have been here %s times' % visits
-    response.headers.add_header('Set-Cookie', 'visits=%s' % visits)
+    response.headers.add_header('Set-Cookie', 'visits=%s' % make_secure_val(visits))
     response.data = home_html.format(message)
     return response
 
