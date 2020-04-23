@@ -1,8 +1,10 @@
 import hashlib
+import hmac
 
-
+SECRET = b'iamsosecret'
+# method to create a hash key for an input
 def hash_str(s):
-    return hashlib.md5(str(s).encode()).hexdigest()
+    return hmac.new(SECRET, str(s).encode()).hexdigest()
 
 # pack value and its hash in one string
 def make_secure_val(s):
