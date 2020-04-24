@@ -40,14 +40,14 @@ home_html = """
     </p>
     <table style="width:100%">
         <tr>
-            <td><a href="/cs253/birthday" aria-label="Jump to">Problem - Birthday</a></td>
-            <td><a href="/cs253/unit2/rot13" aria-label="Jump to">Unit 2 - ROT13</a></td>
-            <td><a href="/cs253/unit2/signup" aria-label="Jump to">Unit 2 - Signup Page</a></td>
-            <td><a href="/cs253/templates/shopping_list_1" aria-label="Jump to">Problem - Shopping List 1</a></td>
-            <td><a href="/cs253/templates/shopping_list_2" aria-label="Jump to">Problem - Shopping List 2</a></td>
-            <td><a href="/cs253/templates/ascii" aria-label="Jump to">Problem - ASCII Chan</a></td>
-            <td><a href="/cs253/blog" aria-label="Jump to">Problem - Blog</a></td>
-            <td><a href="/cs253/unit3/signup" aria-label="Jump to">Unit 3 - Signup </a></td>
+            <td><a href="/cs253/birthday" aria-label="Jump to">CS253 Problem - Birthday</a></td>
+            <td><a href="/cs253/unit2/rot13" aria-label="Jump to">CS253 Unit 2 - ROT13</a></td>
+            <td><a href="/cs253/unit2/signup" aria-label="Jump to">CS253 Unit 2 - Signup Page</a></td>
+            <td><a href="/cs253/templates/shopping_list_1" aria-label="Jump to">CS253 Problem - Shopping List 1</a></td>
+            <td><a href="/cs253/templates/shopping_list_2" aria-label="Jump to">CS253 Problem - Shopping List 2</a></td>
+            <td><a href="/cs253/templates/ascii" aria-label="Jump to">CS253 Problem - ASCII Chan</a></td>
+            <td><a href="/cs253/blog" aria-label="Jump to">CS253 Problem - Blog</a></td>
+            <td><a href="/cs253/unit3/signup" aria-label="Jump to">CS253 Unit 3 - Signup </a></td>
         </tr>
     </table>
     <br>
