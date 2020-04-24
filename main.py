@@ -349,7 +349,7 @@ def unit3_signup():
             return render_template("unit3_signup.html", **params)
         else:
             query = client.query(kind='users', filters=[('username', '=', params['username'])])
-            if len(list(query.fetch())) != 1:
+            if len(list(query.fetch())) == 1:
                 return render_template('unit3_signup.html', username=params['username'], wrong_username_message="That user already exists.")
             entity = datastore.Entity(key=client.key('users'))
             entity.update({\
@@ -357,7 +357,7 @@ def unit3_signup():
                 'password': make_password_hash(params['username'], password),\
                 'email': params['email']})
             client.put(entity)
-            response = redirect('cs253/unit3/welcome')
+            response = redirect('/cs253/unit3/welcome')
             cookie = make_secure_val(entity.id)
             response.headers.add_header('Set-Cookie', 'user_id=%s' % cookie)
             return response #redirect(url_for('unit3_welcome', username=params['username']))
@@ -371,7 +371,7 @@ def unit3_welcome():
     if username.isdigit():
         username = int(username)
     if not username:
-        return redirect('cs253/unit3/signup')
+        return redirect('/cs253/unit3/signup')
     query = client.query(kind='users')
     entity = [item for item in query.fetch() if item.id == username]
     if (len(entity) != 1):
@@ -380,8 +380,28 @@ def unit3_welcome():
     response = Response()
     response.headers['Content-Type'] = 'text/html'
     response.headers.add_header('Set-Cookie', 'user_id=%s' %(cookie))
-    response.data = render_template('unit3_welcome.html', username=username)
+    response.data = render_template('unit3_welcome.html', username=entity['username'])
     return response
+
+@app.route('/cs253/unit3/login', methods=['GET', 'POST'])
+def unit3_login():
+    if request.method == 'GET':
+        return render_template('unit3_login.html')
+    elif request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        query = client.query(kind='users', filters=[('username', '=', username)])
+        user_data = list(query.fetch())
+        if len(user_data) != 1:
+            return render_template('unit3_login.html', error="Invalid login")
+        salt = user_data[0]['password'].split('|')[0]
+        if user_data[0]['password'] != make_password_hash(username, password, salt):
+            return render_template('unit3_login.html', error="Invalid login")
+        # valid username received
+        cookie = make_secure_val(user_data[0].id)
+        response = redirect('/cs253/unit3/welcome')
+        response.headers.add_header('Set-Cookie', 'user_id=%s' % cookie)
+        return response
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

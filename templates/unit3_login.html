@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+{% block pagehighlight %}Login{% endblock %}
+
+{% block content %}
+<form method='post'>
+    <table>
+        <tr>
+            <th>
+                <div class='label'>Username</div>
+            </th>
+            <th>
+                <div>
+                    <input type='text' name='username' value={{username}}>
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <th>
+                <div class='password'>Password</div>
+            </th>
+            <th>
+                <div>
+                    <input type='password' name='password'>
+                </div>
+            </th>
+        </tr>
+    </table>
+    <div class='error'>{{error}}</div>
+    <input type="submit" valu='Submit'>
+</form>
+{% endblock %}
