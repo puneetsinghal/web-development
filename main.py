@@ -368,7 +368,7 @@ def unit3_signup():
 def unit3_welcome():
     cookie = request.cookies.get('user_id')
     username = check_secure_val(cookie)
-    if username.isdigit():
+    if username and username.isdigit():
         username = int(username)
     if not username:
         return redirect('/cs253/unit3/signup')
@@ -402,6 +402,12 @@ def unit3_login():
         response = redirect('/cs253/unit3/welcome')
         response.headers.add_header('Set-Cookie', 'user_id=%s' % cookie)
         return response
+
+@app.route('/cs253/unit3/logout', methods=['GET'])
+def unit3_logout():
+    response = redirect('/cs253/unit3/signup')
+    response.headers.add_header('Set-Cookie', 'user_id=')
+    return response
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
