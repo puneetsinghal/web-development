@@ -17,7 +17,7 @@
 # open libraries
 import cgi
 import datetime
-from flask import Flask, request, Response, jsonify, g, redirect, render_template
+from flask import Flask, request, Response, jsonify, g, redirect, render_template, url_for
 import html
 from google.cloud import datastore
 
@@ -47,6 +47,7 @@ home_html = """
             <td><a href="/cs253/templates/shopping_list_2" aria-label="Jump to">CS253 Problem - Shopping List 2</a></td>
             <td><a href="/cs253/templates/ascii" aria-label="Jump to">CS253 Problem - ASCII Chan</a></td>
             <td><a href="/cs253/blog" aria-label="Jump to">CS253 Problem - Blog</a></td>
+            <td><a href="/cs253/unit3/signup" aria-label="Jump to">CS253 Unit 3 - Signup </a></td>
         </tr>
     </table>
     <br>
@@ -320,6 +321,67 @@ def blog_post(id):
     query = client.query(kind='blog')
     items = [item for item in query.fetch() if item.id == int(id)]
     return render_template("blog-permalink.html", item=items[0])
+
+@app.route('/cs253/unit3/signup', methods=['POST','GET'])
+def unit3_signup():
+    if request.method == 'GET':
+        return render_template("unit3_signup.html")
+    elif request.method == 'POST':
+        params = {}
+        params['username'] = request.form['username']
+        password = request.form['password']
+        verify_password = request.form['verify_password']
+        params['email'] = request.form['email']
+        error = False
+        if not IsValidPassword(password):
+            params['wrong_password_message'] = "That wasn't a valid password"
+            error = True
+        elif not IsMatchingPassword(password, verify_password):
+            params['password_mismatch_message'] = "Your passwords didn't match"
+            error = True
+        if not IsValidUsername(params['username']):
+            params['wrong_username_message'] = "That's not a valid username"
+            error = True
+        if not IsValidEmail(params['email']):
+            params['wrong_email_message'] = "That's not a valid email"
+            error = True
+        if (error):
+            return render_template("unit3_signup.html", **params)
+        else:
+            query = client.query(kind='users', filters=[('username', '=', params['username'])])
+            if len(list(query.fetch())) != 1:
+                return render_template('unit3_signup.html', username=params['username'], wrong_username_message="That user already exists.")
+            entity = datastore.Entity(key=client.key('users'))
+            entity.update({\
+                'username': params['username'],\
+                'password': make_password_hash(params['username'], password),\
+                'email': params['email']})
+            client.put(entity)
+            response = redirect('cs253/unit3/welcome')
+            cookie = make_secure_val(entity.id)
+            response.headers.add_header('Set-Cookie', 'user_id=%s' % cookie)
+            return response #redirect(url_for('unit3_welcome', username=params['username']))
+    else:
+        return 'something wrong in post'
+
+@app.route('/cs253/unit3/welcome', methods=['GET'])
+def unit3_welcome():
+    cookie = request.cookies.get('user_id')
+    username = check_secure_val(cookie)
+    if username.isdigit():
+        username = int(username)
+    if not username:
+        return redirect('cs253/unit3/signup')
+    query = client.query(kind='users')
+    entity = [item for item in query.fetch() if item.id == username]
+    if (len(entity) != 1):
+        print("ERROR! username is not found in database")
+    entity = entity[0]
+    response = Response()
+    response.headers['Content-Type'] = 'text/html'
+    response.headers.add_header('Set-Cookie', 'user_id=%s' %(cookie))
+    response.data = render_template('unit3_welcome.html', username=username)
+    return response
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
