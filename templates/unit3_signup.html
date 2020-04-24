@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+Sign Up
+{% endblock %}
+
+{% block pagehighlight %}
+Signup
+{% endblock %}
+
+{% block content %}
+<h2>Signup</h2>
+<br>
+<form method = 'POST'>
+    <table>
+        <tr>
+            <td><div class='label'>Username</div></td>
+            <td><div>
+                <input type='text' name='username' value='{{username}}'>
+            </div></td>
+            <td><div class='error'>{{wrong_username_message}}</div></td>
+        </tr>
+        <tr>
+            <td><div class='label'>Password</div></td>
+            <td><div>
+                <input type='password' name='password' value=''>
+            </div></td>
+            <td><div class='error'>{{wrong_password_message}}</div></td>
+        </tr>
+        <tr>
+            <td><div class='label'>Verify Password</div></td>
+            <td><div>
+                <input type='password' name='verify_password' value=''>
+            </div></td>
+            <td><div class='error'>{{password_mismatch_message}}</div></td>
+        </tr>
+        <tr>
+            <td><div class='label'>Email (optional)</div></td>
+            <td><div>
+                <input type='text' name='email' value='{{email}}'>
+            </div></td>
+            <td><div class='error'>{{wrong_email_message}}</div></td>
+        </tr>
+    </table>
+    <div>
+        <input type='submit' value='Submit'>
+    </div>
+</form>
+
+{% endblock %}
