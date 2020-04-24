@@ -25,7 +25,7 @@ def check_secure_val(h):
 # returns a hashed (sha256) password of the format:
 # HASH(name + pw + salt), salt
 def make_password_hash(name, pw, salt=make_salt()):
-    return "%s|%s" %(hashlib.sha256((name+pw+salt).encode()).hexdigest(), salt)
+    return "%s|%s" %(salt, hashlib.sha256((name+pw+salt).encode()).hexdigest())
 
 def valid_pw(name, pw, h):
     salt = h.split('|')[0]
